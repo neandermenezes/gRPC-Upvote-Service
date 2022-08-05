@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	pb "github.com/neandermenezes/gRPC-Upvote-Service/proto/pb"
 	"github.com/neandermenezes/gRPC-Upvote-Service/server/entity"
 	"github.com/neandermenezes/gRPC-Upvote-Service/server/repository"
@@ -118,8 +119,39 @@ func (s *service) DeletePost(in *pb.PostId, ctx context.Context) (*emptypb.Empty
 }
 
 func (s *service) ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsServer) error {
-	log.Println("ListPosts service was invoked")
-	panic("implement me")
+	cursor, err := postRepository.ListPosts()
+	ctx := context.Background()
+
+	if err != nil {
+		return status.Errorf(
+			codes.Internal,
+			fmt.Sprintf("Unknown internal error: %v\n", err),
+		)
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		data := &entity.PostItem{}
+		err := cursor.Decode(data)
+
+		if err != nil {
+			return status.Errorf(
+				codes.Internal,
+				fmt.Sprintf("Error while decoding data from MongoDB: %v", err),
+			)
+		}
+
+		stream.Send(entity.DocumentToBlog(data))
+	}
+
+	if err = cursor.Err(); err != nil {
+		return status.Errorf(
+			codes.Internal,
+			fmt.Sprintf("Unknown internal error: %v", err),
+		)
+	}
+
+	return nil
 }
 
 func (s *service) UpvotePost(in *pb.PostId, ctx context.Context) (*emptypb.Empty, error) {
