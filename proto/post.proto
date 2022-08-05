@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/neandermenezes/gRPC-Upvote-Service/proto";
+
+import "google/protobuf/empty.proto";
+
+message Post {
+string id = 1;
+string author_name = 2;
+string title = 3;
+string content = 4;
+uint32 like_count = 5;
+}
+
+message PostId {
+string id = 1;
+}
+
+service BlogService {
+rpc CreateBlog (Post) returns (PostId);
+rpc ReadBlog (PostId) returns (Post);
+rpc UpdateBlog (Post) returns (google.protobuf.Empty);
+rpc DeleteBlog (PostId) returns (google.protobuf.Empty);
+rpc ListBlogs (google.protobuf.Empty) returns (stream Post);
+rpc UpvotePost (PostId) returns (google.protobuf.Empty);
+}
