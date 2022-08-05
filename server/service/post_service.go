@@ -71,21 +71,58 @@ func (s *service) ReadPost(in *pb.PostId, ctx context.Context) (*pb.Post, error)
 }
 
 func (s *service) UpdatePost(in *pb.Post, ctx context.Context) (*emptypb.Empty, error) {
-	//TODO implement me
-	panic("implement me")
+	log.Println("UpdatePost service was invoked")
+
+	oid, err := primitive.ObjectIDFromHex(in.Id)
+
+	if err != nil {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			"Cannot parse ID",
+		)
+	}
+
+	data := &entity.PostItem{
+		Title:   in.Title,
+		Content: in.Content,
+	}
+
+	res, err := postRepository.UpdatePost(oid, data, ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
 }
 
 func (s *service) DeletePost(in *pb.PostId, ctx context.Context) (*emptypb.Empty, error) {
-	//TODO implement me
-	panic("implement me")
+	log.Println("DeletePost service was invoked")
+
+	oid, err := primitive.ObjectIDFromHex(in.Id)
+
+	if err != nil {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			"Cannot parse ID",
+		)
+	}
+
+	res, err := postRepository.DeletePost(oid, ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
 }
 
 func (s *service) ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsServer) error {
-	//TODO implement me
+	log.Println("ListPosts service was invoked")
 	panic("implement me")
 }
 
 func (s *service) UpvotePost(in *pb.PostId, ctx context.Context) (*emptypb.Empty, error) {
-	//TODO implement me
+	log.Println("UpvotePost service was invoked")
 	panic("implement me")
 }
