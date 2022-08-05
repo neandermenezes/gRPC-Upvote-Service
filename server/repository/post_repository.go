@@ -24,7 +24,7 @@ type PostRepository interface {
 	ReadPost(id primitive.ObjectID, ctx context.Context) (*pb.Post, error)
 	UpdatePost(id primitive.ObjectID, data *entity.PostItem, ctx context.Context) (*emptypb.Empty, error)
 	DeletePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error)
-	//ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsServer) error
+	ListPosts() (*mongo.Cursor, error)
 	UpvotePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error)
 }
 
@@ -112,6 +112,19 @@ func (r *repo) DeletePost(id primitive.ObjectID, ctx context.Context) (*emptypb.
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+func (r *repo) ListPosts() (*mongo.Cursor, error) {
+	cur, err := Collection.Find(context.Background(), primitive.D{{}})
+
+	if err != nil {
+		return nil, status.Errorf(
+			codes.Internal,
+			fmt.Sprintf("Something went wrong: %v\n", err),
+		)
+	}
+
+	return cur, nil
 }
 
 func (r *repo) UpvotePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error) {
