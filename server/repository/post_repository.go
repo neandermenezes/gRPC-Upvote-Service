@@ -22,8 +22,8 @@ var (
 type PostRepository interface {
 	CreatePost(data *entity.PostItem, ctx context.Context) (*pb.PostId, error)
 	ReadPost(id primitive.ObjectID, ctx context.Context) (*pb.Post, error)
-	UpdatePost(data *entity.PostItem, ctx context.Context) (*emptypb.Empty, error)
-	DeletePost(id *pb.PostId, ctx context.Context) (*emptypb.Empty, error)
+	UpdatePost(id primitive.ObjectID, data *entity.PostItem, ctx context.Context) (*emptypb.Empty, error)
+	DeletePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error)
 	//ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsServer) error
 	UpvotePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error)
 }
@@ -70,14 +70,48 @@ func (r *repo) ReadPost(id primitive.ObjectID, ctx context.Context) (*pb.Post, e
 	return entity.DocumentToBlog(data), nil
 }
 
-func (r *repo) UpdatePost(data *entity.PostItem, ctx context.Context) (*emptypb.Empty, error) {
-	//TODO implement me
-	panic("implement me")
+func (r *repo) UpdatePost(id primitive.ObjectID, data *entity.PostItem, ctx context.Context) (*emptypb.Empty, error) {
+	res, err := Collection.UpdateOne(
+		ctx,
+		bson.M{"_id": id},
+		bson.M{"$set": data},
+	)
+
+	if err != nil {
+		return nil, status.Errorf(
+			codes.Internal,
+			fmt.Sprintf("Could not update because %v\n", err),
+		)
+	}
+
+	if res.MatchedCount == 0 {
+		return nil, status.Errorf(
+			codes.NotFound,
+			"Cannot find blog with Id",
+		)
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
-func (r *repo) DeletePost(id *pb.PostId, ctx context.Context) (*emptypb.Empty, error) {
-	//TODO implement me
-	panic("implement me")
+func (r *repo) DeletePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error) {
+	res, err := Collection.DeleteOne(ctx, bson.M{"_id": id})
+
+	if err != nil {
+		return nil, status.Errorf(
+			codes.Internal,
+			fmt.Sprintf("Cannot delete object in MongoDB: %v", err),
+		)
+	}
+
+	if res.DeletedCount == 0 {
+		return nil, status.Errorf(
+			codes.NotFound,
+			"Blog was not found",
+		)
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func (r *repo) UpvotePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error) {
