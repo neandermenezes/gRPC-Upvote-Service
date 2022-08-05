@@ -6,7 +6,7 @@ import (
 )
 
 type PostItem struct {
-	ID         primitive.ObjectID `bson:"id",omitempty`
+	ID         primitive.ObjectID `bson:"_id,omitempty"`
 	AuthorName string             `bson:"authorName"`
 	Title      string             `bson:"title"`
 	Content    string             `bson:"content"`
