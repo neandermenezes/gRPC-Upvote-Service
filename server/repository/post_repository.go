@@ -128,6 +128,18 @@ func (r *repo) ListPosts() (*mongo.Cursor, error) {
 }
 
 func (r *repo) UpvotePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error) {
-	//TODO implement me
-	panic("implement me")
+	_, err := Collection.UpdateOne(
+		ctx,
+		bson.M{"_id": id},
+		bson.M{"$inc": bson.M{"likeCount": 1}},
+	)
+
+	if err != nil {
+		return nil, status.Errorf(
+			codes.Internal,
+			fmt.Sprintf("Something went wrong: %v\n", err),
+		)
+	}
+
+	return &emptypb.Empty{}, nil
 }
