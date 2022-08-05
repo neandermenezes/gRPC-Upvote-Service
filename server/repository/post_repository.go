@@ -5,6 +5,7 @@ import (
 	"fmt"
 	pb "github.com/neandermenezes/gRPC-Upvote-Service/proto/pb"
 	"github.com/neandermenezes/gRPC-Upvote-Service/server/entity"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
@@ -20,7 +21,7 @@ var (
 
 type PostRepository interface {
 	CreatePost(data *entity.PostItem, ctx context.Context) (*pb.PostId, error)
-	ReadPost(id primitive.ObjectID, ctx context.Context) (*entity.PostItem, error)
+	ReadPost(id primitive.ObjectID, ctx context.Context) (*pb.Post, error)
 	UpdatePost(data *entity.PostItem, ctx context.Context) (*emptypb.Empty, error)
 	DeletePost(id *pb.PostId, ctx context.Context) (*emptypb.Empty, error)
 	//ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsServer) error
@@ -53,9 +54,20 @@ func (r *repo) CreatePost(data *entity.PostItem, ctx context.Context) (*pb.PostI
 	return &pb.PostId{Id: oid.Hex()}, nil
 }
 
-func (r *repo) ReadPost(id primitive.ObjectID, ctx context.Context) (*entity.PostItem, error) {
-	//TODO implement me
-	panic("implement me")
+func (r *repo) ReadPost(id primitive.ObjectID, ctx context.Context) (*pb.Post, error) {
+	data := &entity.PostItem{}
+	filter := bson.M{"_id": id}
+
+	res := Collection.FindOne(ctx, filter)
+
+	if err := res.Decode(data); err != nil {
+		return nil, status.Errorf(
+			codes.NotFound,
+			"Cannot find the blog with id provided",
+		)
+	}
+
+	return entity.DocumentToBlog(data), nil
 }
 
 func (r *repo) UpdatePost(data *entity.PostItem, ctx context.Context) (*emptypb.Empty, error) {
