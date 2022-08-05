@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type repo struct{}
@@ -18,7 +19,12 @@ var (
 )
 
 type PostRepository interface {
-	CreatePost(in *entity.PostItem, ctx context.Context) (*pb.PostId, error)
+	CreatePost(data *entity.PostItem, ctx context.Context) (*pb.PostId, error)
+	ReadPost(id primitive.ObjectID, ctx context.Context) (*entity.PostItem, error)
+	UpdatePost(data *entity.PostItem, ctx context.Context) (*emptypb.Empty, error)
+	DeletePost(id *pb.PostId, ctx context.Context) (*emptypb.Empty, error)
+	//ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsServer) error
+	UpvotePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error)
 }
 
 func NewPostRepository() PostRepository {
@@ -45,4 +51,24 @@ func (r *repo) CreatePost(data *entity.PostItem, ctx context.Context) (*pb.PostI
 	}
 
 	return &pb.PostId{Id: oid.Hex()}, nil
+}
+
+func (r *repo) ReadPost(id primitive.ObjectID, ctx context.Context) (*entity.PostItem, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *repo) UpdatePost(data *entity.PostItem, ctx context.Context) (*emptypb.Empty, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *repo) DeletePost(id *pb.PostId, ctx context.Context) (*emptypb.Empty, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *repo) UpvotePost(id primitive.ObjectID, ctx context.Context) (*emptypb.Empty, error) {
+	//TODO implement me
+	panic("implement me")
 }
