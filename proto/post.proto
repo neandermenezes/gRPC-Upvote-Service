@@ -18,7 +18,7 @@ message PostId {
 string id = 1;
 }
 
-service BlogService {
+service PostService {
 rpc CreateBlog (Post) returns (PostId);
 rpc ReadBlog (PostId) returns (Post);
 rpc UpdateBlog (Post) returns (google.protobuf.Empty);
