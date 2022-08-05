@@ -21,7 +21,7 @@ func NewPostController(service service.PostService) PostServer {
 }
 
 func (s *PostServer) CreatePost(ctx context.Context, in *pb.Post) (*pb.PostId, error) {
-	res, err := postService.CreatePost(in)
+	res, err := postService.CreatePost(in, ctx)
 
 	if err != nil {
 		return nil, err

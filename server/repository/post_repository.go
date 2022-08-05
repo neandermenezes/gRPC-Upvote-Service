@@ -18,15 +18,15 @@ var (
 )
 
 type PostRepository interface {
-	CreatePost(in *entity.PostItem) (*pb.PostId, error)
+	CreatePost(in *entity.PostItem, ctx context.Context) (*pb.PostId, error)
 }
 
 func NewPostRepository() PostRepository {
 	return &repo{}
 }
 
-func (r *repo) CreatePost(data *entity.PostItem) (*pb.PostId, error) {
-	res, err := Collection.InsertOne(context.Background(), data)
+func (r *repo) CreatePost(data *entity.PostItem, ctx context.Context) (*pb.PostId, error) {
+	res, err := Collection.InsertOne(ctx, data)
 
 	if err != nil {
 		return nil, status.Errorf(

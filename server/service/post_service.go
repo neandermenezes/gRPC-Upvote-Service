@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	pb "github.com/neandermenezes/gRPC-Upvote-Service/proto/pb"
 	"github.com/neandermenezes/gRPC-Upvote-Service/server/entity"
 	"github.com/neandermenezes/gRPC-Upvote-Service/server/repository"
@@ -8,7 +9,7 @@ import (
 )
 
 type PostService interface {
-	CreatePost(in *pb.Post) (*pb.PostId, error)
+	CreatePost(in *pb.Post, ctx context.Context) (*pb.PostId, error)
 }
 
 type service struct{}
@@ -20,7 +21,7 @@ func NewPostService(repository repository.PostRepository) PostService {
 	return &service{}
 }
 
-func (*service) CreatePost(in *pb.Post) (*pb.PostId, error) {
+func (*service) CreatePost(in *pb.Post, ctx context.Context) (*pb.PostId, error) {
 	log.Println("CreatePost service was invoked")
 
 	data := entity.PostItem{
@@ -30,7 +31,7 @@ func (*service) CreatePost(in *pb.Post) (*pb.PostId, error) {
 		LikeCount:  0,
 	}
 
-	res, err := postRepository.CreatePost(&data)
+	res, err := postRepository.CreatePost(&data, ctx)
 
 	if err != nil {
 		return nil, err
