@@ -31,7 +31,13 @@ func (s *PostServer) CreatePost(ctx context.Context, in *pb.Post) (*pb.PostId, e
 }
 
 func (s *PostServer) ReadPost(ctx context.Context, in *pb.PostId) (*pb.Post, error) {
-	return nil, nil
+	res, err := postService.ReadPost(in, ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
 }
 
 func (s *PostServer) UpdatePost(ctx context.Context, in *pb.Post) (*emptypb.Empty, error) {
