@@ -84,8 +84,9 @@ func (s *service) UpdatePost(in *pb.Post, ctx context.Context) (*emptypb.Empty, 
 	}
 
 	data := &entity.PostItem{
-		Title:   in.Title,
-		Content: in.Content,
+		AuthorName: in.AuthorName,
+		Title:      in.Title,
+		Content:    in.Content,
 	}
 
 	res, err := postRepository.UpdatePost(oid, data, ctx)
