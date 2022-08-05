@@ -5,6 +5,9 @@ import (
 	pb "github.com/neandermenezes/gRPC-Upvote-Service/proto/pb"
 	"github.com/neandermenezes/gRPC-Upvote-Service/server/entity"
 	"github.com/neandermenezes/gRPC-Upvote-Service/server/repository"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 )
@@ -47,8 +50,24 @@ func (*service) CreatePost(in *pb.Post, ctx context.Context) (*pb.PostId, error)
 }
 
 func (s *service) ReadPost(in *pb.PostId, ctx context.Context) (*pb.Post, error) {
-	//TODO implement me
-	panic("implement me")
+	log.Println("ReadPost service was invoked")
+
+	oid, err := primitive.ObjectIDFromHex(in.Id)
+
+	if err != nil {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			"Cannot parse ID",
+		)
+	}
+
+	res, err := postRepository.ReadPost(oid, ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
 }
 
 func (s *service) UpdatePost(in *pb.Post, ctx context.Context) (*emptypb.Empty, error) {
