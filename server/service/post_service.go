@@ -119,6 +119,8 @@ func (s *service) DeletePost(in *pb.PostId, ctx context.Context) (*emptypb.Empty
 }
 
 func (s *service) ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsServer) error {
+	log.Println("ListPosts service was invoked")
+
 	cursor, err := postRepository.ListPosts()
 	ctx := context.Background()
 
@@ -155,6 +157,22 @@ func (s *service) ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsSe
 }
 
 func (s *service) UpvotePost(in *pb.PostId, ctx context.Context) (*emptypb.Empty, error) {
-	log.Println("UpvotePost service was invoked")
-	panic("implement me")
+	log.Println("DeletePost service was invoked")
+
+	oid, err := primitive.ObjectIDFromHex(in.Id)
+
+	if err != nil {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			"Cannot parse ID",
+		)
+	}
+
+	res, err := postRepository.UpvotePost(oid, ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
 }
