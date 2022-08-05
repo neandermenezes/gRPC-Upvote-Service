@@ -2,18 +2,10 @@ package main
 
 import (
 	pb "github.com/neandermenezes/gRPC-Upvote-Service/proto/pb"
-	"github.com/neandermenezes/gRPC-Upvote-Service/server/database"
+	"github.com/neandermenezes/gRPC-Upvote-Service/server/controller"
 	"google.golang.org/grpc"
 	"log"
 	"net"
-)
-
-type Server struct {
-	pb.PostServiceServer
-}
-
-var (
-	mongoDB = database.NewMongoDatabase()
 )
 
 func main() {
@@ -38,7 +30,7 @@ func main() {
 	log.Println("Listening on port 50051")
 
 	s := grpc.NewServer()
-	pb.RegisterPostServiceServer(s, &Server{})
+	pb.RegisterPostServiceServer(s, &controller.PostServer{})
 
 	if err = s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
