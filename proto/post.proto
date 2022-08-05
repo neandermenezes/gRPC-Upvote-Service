@@ -19,10 +19,10 @@ string id = 1;
 }
 
 service PostService {
-rpc CreateBlog (Post) returns (PostId);
-rpc ReadBlog (PostId) returns (Post);
-rpc UpdateBlog (Post) returns (google.protobuf.Empty);
-rpc DeleteBlog (PostId) returns (google.protobuf.Empty);
-rpc ListBlogs (google.protobuf.Empty) returns (stream Post);
+rpc CreatePost (Post) returns (PostId);
+rpc ReadPost (PostId) returns (Post);
+rpc UpdatePost (Post) returns (google.protobuf.Empty);
+rpc DeletePost (PostId) returns (google.protobuf.Empty);
+rpc ListPosts (google.protobuf.Empty) returns (stream Post);
 rpc UpvotePost (PostId) returns (google.protobuf.Empty);
 }

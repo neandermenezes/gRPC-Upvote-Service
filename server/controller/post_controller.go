@@ -3,30 +3,32 @@ package controller
 import (
 	"context"
 	pb "github.com/neandermenezes/gRPC-Upvote-Service/proto/pb"
+	"github.com/neandermenezes/gRPC-Upvote-Service/server/service"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type PostServer struct {
 	pb.PostServiceServer
+	service *service.PostService
 }
 
-func (s *PostServer) CreateBlog(ctx context.Context, in *pb.Post) (*pb.PostId, error) {
+func (s *PostServer) CreatePost(ctx context.Context, in *pb.Post) (*pb.PostId, error) {
 	return nil, nil
 }
 
-func (s *PostServer) ReadBlog(ctx context.Context, in *pb.PostId) (*pb.Post, error) {
+func (s *PostServer) ReadPost(ctx context.Context, in *pb.PostId) (*pb.Post, error) {
 	return nil, nil
 }
 
-func (s *PostServer) UpdateBlog(ctx context.Context, in *pb.Post) (*emptypb.Empty, error) {
+func (s *PostServer) UpdatePost(ctx context.Context, in *pb.Post) (*emptypb.Empty, error) {
 	return nil, nil
 }
 
-func (s *PostServer) DeleteBlog(ctx context.Context, in *pb.PostId) (*emptypb.Empty, error) {
+func (s *PostServer) DeletePost(ctx context.Context, in *pb.PostId) (*emptypb.Empty, error) {
 	return nil, nil
 }
 
-func (s *PostServer) ListBlogs(in *emptypb.Empty, stream pb.PostService_ListBlogsServer) error {
+func (s *PostServer) ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsServer) error {
 	return nil
 }
 
