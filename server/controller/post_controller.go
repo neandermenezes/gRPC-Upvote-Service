@@ -9,11 +9,25 @@ import (
 
 type PostServer struct {
 	pb.PostServiceServer
-	service *service.PostService
+}
+
+var (
+	postService service.PostService
+)
+
+func NewPostController(service service.PostService) PostServer {
+	postService = service
+	return PostServer{}
 }
 
 func (s *PostServer) CreatePost(ctx context.Context, in *pb.Post) (*pb.PostId, error) {
-	return nil, nil
+	res, err := postService.CreatePost(in)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (s *PostServer) ReadPost(ctx context.Context, in *pb.PostId) (*pb.Post, error) {
