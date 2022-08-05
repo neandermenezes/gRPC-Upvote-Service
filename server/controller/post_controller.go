@@ -41,17 +41,41 @@ func (s *PostServer) ReadPost(ctx context.Context, in *pb.PostId) (*pb.Post, err
 }
 
 func (s *PostServer) UpdatePost(ctx context.Context, in *pb.Post) (*emptypb.Empty, error) {
-	return nil, nil
+	res, err := postService.UpdatePost(in, ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
 }
 
 func (s *PostServer) DeletePost(ctx context.Context, in *pb.PostId) (*emptypb.Empty, error) {
-	return nil, nil
+	res, err := postService.DeletePost(in, ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
 }
 
 func (s *PostServer) ListPosts(in *emptypb.Empty, stream pb.PostService_ListPostsServer) error {
+	err := postService.ListPosts(in, stream)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (s *PostServer) UpvotePost(ctx context.Context, in *pb.PostId) (*emptypb.Empty, error) {
-	return nil, nil
+	res, err := postService.UpvotePost(in, ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, err
 }
