@@ -68,7 +68,7 @@ func TestService_CreatePost(t *testing.T) {
 
 	res, err := testService.CreatePost(newPost, context.Background())
 	if err != nil {
-		t.Errorf("Something went wrong")
+		t.Errorf("Could not create post: %v\n", err)
 	}
 
 	mockRepo.AssertExpectations(t)
@@ -91,7 +91,7 @@ func TestService_ReadPost(t *testing.T) {
 
 	res, err := testService.ReadPost(id, context.Background())
 	if err != nil {
-		t.Errorf("Something went wrong")
+		t.Errorf("Could not read post: %v\n", err)
 	}
 
 	mockRepo.AssertExpectations(t)
@@ -115,7 +115,23 @@ func TestService_UpdatePost(t *testing.T) {
 	res, err := testService.UpdatePost(post, context.Background())
 
 	if err != nil {
-		t.Errorf("Something went wrong")
+		t.Errorf("Could not update post: %v\n", err)
+	}
+
+	mockRepo.AssertExpectations(t)
+	assert.Equal(t, &emptypb.Empty{}, res)
+}
+
+func TestService_DeletePost(t *testing.T) {
+	id := &pb.PostId{Id: primitive.NewObjectID().Hex()}
+
+	mockRepo.On("DeletePost").Return(&emptypb.Empty{}, nil)
+	testService := NewPostService(mockRepo)
+
+	res, err := testService.DeletePost(id, context.Background())
+
+	if err != nil {
+		t.Errorf("Could not delete post: %v\n", err)
 	}
 
 	mockRepo.AssertExpectations(t)
