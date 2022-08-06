@@ -86,7 +86,7 @@ func TestService_ReadPost(t *testing.T) {
 		LikeCount:  0,
 	}
 
-	mockRepo.On("ReadPost").Return(expected, nil)
+	mockRepo.On("ListPosts").Return(expected, nil)
 	testService := NewPostService(mockRepo)
 
 	res, err := testService.ReadPost(id, context.Background())
@@ -129,6 +129,35 @@ func TestService_DeletePost(t *testing.T) {
 	testService := NewPostService(mockRepo)
 
 	res, err := testService.DeletePost(id, context.Background())
+
+	if err != nil {
+		t.Errorf("Could not delete post: %v\n", err)
+	}
+
+	mockRepo.AssertExpectations(t)
+	assert.Equal(t, &emptypb.Empty{}, res)
+}
+
+//func TestService_ListPosts(t *testing.T) {
+//	mockRepo.On("ListPosts").Return(&mongo.Cursor{}, nil)
+//	testService := NewPostService(mockRepo)
+//
+//	err := testService.ListPosts(nil, nil)
+//
+//	if err != nil {
+//		t.Errorf("Could not list posts: %v\n", err)
+//	}
+//
+//	mockRepo.AssertExpectations(t)
+//}
+
+func TestService_UpvotePost(t *testing.T) {
+	id := &pb.PostId{Id: primitive.NewObjectID().Hex()}
+
+	mockRepo.On("UpvotePost").Return(&emptypb.Empty{}, nil)
+	testService := NewPostService(mockRepo)
+
+	res, err := testService.UpvotePost(id, context.Background())
 
 	if err != nil {
 		t.Errorf("Could not delete post: %v\n", err)
