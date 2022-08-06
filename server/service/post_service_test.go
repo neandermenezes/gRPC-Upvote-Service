@@ -4,17 +4,19 @@ import (
 	"context"
 	pb "github.com/neandermenezes/gRPC-Upvote-Service/proto/pb"
 	"github.com/neandermenezes/gRPC-Upvote-Service/server/entity"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"log"
 	"testing"
 )
 
 type MockRepository struct {
 	mock.Mock
 }
+
+var mockRepo = new(MockRepository)
 
 func (m *MockRepository) CreatePost(data *entity.PostItem, ctx context.Context) (*pb.PostId, error) {
 	args := m.Called()
@@ -53,8 +55,8 @@ func (m *MockRepository) UpvotePost(id primitive.ObjectID, ctx context.Context) 
 }
 
 func TestService_CreatePost(t *testing.T) {
-	mockRepo := new(MockRepository)
-	mockRepo.On("CreatePost").Return(&pb.PostId{Id: primitive.NewObjectID().Hex()}, nil)
+	id := primitive.NewObjectID().Hex()
+	mockRepo.On("CreatePost").Return(&pb.PostId{Id: id}, nil)
 
 	testService := NewPostService(mockRepo)
 
@@ -64,10 +66,38 @@ func TestService_CreatePost(t *testing.T) {
 		Content:    "test",
 	}
 
-	post, err := testService.CreatePost(newPost, context.Background())
+	res, err := testService.CreatePost(newPost, context.Background())
 	if err != nil {
-		return
+		t.Errorf("Something went wrong")
 	}
 
-	log.Println(post)
+	mockRepo.AssertExpectations(t)
+	assert.Equal(t, id, res.Id)
+}
+
+func TestService_ReadPost(t *testing.T) {
+	id := &pb.PostId{Id: primitive.NewObjectID().Hex()}
+
+	expected := &pb.Post{
+		Id:         id.Id,
+		AuthorName: "teste",
+		Title:      "teste",
+		Content:    "teste",
+		LikeCount:  0,
+	}
+
+	mockRepo.On("ReadPost").Return(expected, nil)
+
+	testService := NewPostService(mockRepo)
+
+	res, err := testService.ReadPost(id, context.Background())
+	if err != nil {
+		t.Errorf("Something went wrong")
+	}
+
+	mockRepo.AssertExpectations(t)
+	assert.Equal(t, id.Id, res.Id)
+	assert.Equal(t, expected.AuthorName, res.AuthorName)
+	assert.Equal(t, expected.Title, res.Title)
+	assert.Equal(t, expected.Content, res.Content)
 }
