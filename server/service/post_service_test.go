@@ -87,7 +87,6 @@ func TestService_ReadPost(t *testing.T) {
 	}
 
 	mockRepo.On("ReadPost").Return(expected, nil)
-
 	testService := NewPostService(mockRepo)
 
 	res, err := testService.ReadPost(id, context.Background())
@@ -100,4 +99,25 @@ func TestService_ReadPost(t *testing.T) {
 	assert.Equal(t, expected.AuthorName, res.AuthorName)
 	assert.Equal(t, expected.Title, res.Title)
 	assert.Equal(t, expected.Content, res.Content)
+}
+
+func TestService_UpdatePost(t *testing.T) {
+	id := &pb.PostId{Id: primitive.NewObjectID().Hex()}
+	post := &pb.Post{
+		Id:      id.Id,
+		Title:   "teste",
+		Content: "teste",
+	}
+
+	mockRepo.On("UpdatePost").Return(&emptypb.Empty{}, nil)
+	testService := NewPostService(mockRepo)
+
+	res, err := testService.UpdatePost(post, context.Background())
+
+	if err != nil {
+		t.Errorf("Something went wrong")
+	}
+
+	mockRepo.AssertExpectations(t)
+	assert.Equal(t, &emptypb.Empty{}, res)
 }
