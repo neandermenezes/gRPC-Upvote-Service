@@ -1,7 +1,7 @@
 # gRPC-Upvote-Service
 Upvote service using gRPC and golang for Klever
 
-## protobuf messsages:
+## protobuf messages:
 ```
 - Post: id, author_name, title, content, like_count
 - PostId: id,
