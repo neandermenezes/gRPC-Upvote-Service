@@ -1,5 +1,6 @@
 # gRPC-Upvote-Service
 Upvote service using gRPC and golang for Klever
+
 Mongo atlas was used in this application 
 
 ## protobuf messages:
