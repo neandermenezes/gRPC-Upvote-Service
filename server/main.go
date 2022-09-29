@@ -22,8 +22,6 @@ var (
 	postController controller.PostServer     = controller.NewPostController(postService)
 )
 
-// aaa
-
 func main() {
 	ctx := context.Background()
 
