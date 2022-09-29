@@ -2,6 +2,10 @@ package main
 
 import (
 	"context"
+	"log"
+	"net"
+	"os"
+
 	"github.com/joho/godotenv"
 	pb "github.com/neandermenezes/gRPC-Upvote-Service/proto/pb"
 	"github.com/neandermenezes/gRPC-Upvote-Service/server/controller"
@@ -10,9 +14,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
-	"log"
-	"net"
-	"os"
 )
 
 var (
@@ -20,6 +21,8 @@ var (
 	postService    service.PostService       = service.NewPostService(postRepository)
 	postController controller.PostServer     = controller.NewPostController(postService)
 )
+
+// aaa
 
 func main() {
 	ctx := context.Background()
